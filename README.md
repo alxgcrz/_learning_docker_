@@ -514,6 +514,8 @@ Show client and server version:
 Start the daemon manually
 > dockerd
 
+---
+
 ## Enlaces de interés
 
 - [Docker Docs](https://docs.docker.com/)  
