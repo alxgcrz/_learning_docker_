@@ -51,7 +51,7 @@ Los principales componentes de Docker que debemos conocer son:
 
 <!-- markdownlint-disable MD033 -->
 <p align="center">
-    <img src="assets/docker-architecture.png">
+    <img src="assets/docker-architecture.png" alt="docker architecture">
 </p>
 <!-- markdownlint-enable MD033 -->
 
