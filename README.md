@@ -2,14 +2,6 @@
 
 ... EN DESARROLLO ...
 
-<!-- markdownlint-disable MD033 -->
-<p align="center">
-  <a href="https://alxgcrz.com" target="_blank">
-    <img src="https://alxgcrz.com/assets/asset_06_v1.png" alt="En desarrollo" title="En desarrollo" width="40%">
-  </a>
-</p>
-<!-- markdownlint-enable MD033 -->
-
 ## Overview
 
 Docker permite empaquetar las aplicaciones en **contenedores** que incluyen todo lo neceario para que se puedan ejecutar en un entorno de manera aislada. Cada contenedor almacena el código fuente de la aplicación, los archivos de configuración y todas las dependencias software que necesita. Esta estrategia permite que las aplicaciones se puedan ejecutar de la misma manera sobre cualquier infraestructura que tenga soporte para Docker, tanto de forma local como en la nube.
@@ -248,7 +240,7 @@ Docker images are a lightweight, standalone, executable package of software that
 
 ---
 
-## Enlaces de interés
+## Referencias
 
 - <https://docs.docker.com/>
 - <https://docs.docker.com/language/java/>
