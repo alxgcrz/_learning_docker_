@@ -1,6 +1,6 @@
 # Docker
 
-... EN DESARROLLO ...
+> :warning: **DOCUMENTO EN DESARROLLO** :warning:
 
 ## Overview
 
@@ -144,98 +144,155 @@ Tiene un diseño modular y está formado por varios componentes que cumplen con 
 Docker images are a lightweight, standalone, executable package of software that includes everything needed to run an application: code, runtime, system tools, system libraries and settings
 
 ```bash
-# Build an image
-> docker image build --rm=true .
+# Buscar una imagen en Docker Hub
+docker search ${SEARCH_TERM}
 
-# Install an image:
-> docker image pull ${IMAGE}
+# Descargar una imagen (por ejemplo Docker Hub)
+docker image pull ${IMAGE}
 
-# List of installed images:
-> docker image ls
+# Construir una imagen a partir de un Dockerfile
+docker image build --rm=true -t my-image:tag .
+
+# Listar todas las imágenes instaladas localmente
+docker image ls
  
-# List of installed images (detailed listing):
-> docker image ls --no-trunc
+# Listar imágenes instaladas (listado detallado)
+docker image ls --no-trunc
 
-# Remove an image:
-> docker image rm ${IMAGE_ID}
+# Mostrar información detallada sobre una imagen específica
+docker image inspect ${IMAGE_ID}
 
-# Remove unused images:
-> docker image prune
+# Ver historial de instrucciones de una imagen
+docker image history ${IMAGE_ID}
 
-# Remove all images:
-> docker image rm $(docker image ls -aq)
+# Etiquetar una imagen existente
+docker tag ${SOURCE_IMAGE} ${TARGET_IMAGE}
 
-# Para listar las instrucciones usadas en la creación de la imagen:
-> docker image history ${IMAGE_ID}
+# Eliminar una imagen específica
+docker image rm ${IMAGE_ID}
+
+# Eliminar todas las imágenes
+docker image rm $(docker image ls -aq)
+
+# Eliminar imágenes no utilizadas (sin contenedores asociados)
+docker image prune
+
+# Eliminar imágenes no utilizadas y sin etiqueta
+docker image prune -a
+
+# Eliminar imágenes intermedias (build cache)
+docker builder prune
 ```
 
 ### CONTAINERS
 
 ```bash
-# Run a container:
-> docker container run
+# Ejecutar un contenedor
+docker container run -d --name my-container -p 80:80 my-image
 
-# List of running containers:
-> docker container ls
+# Listar contenedores en ejecución
+docker container ls
 
-# List of all containers:
-> docker container ls -a(--all)
+# Listar todos los contenedores
+docker container ls --all
 
-# Stop a container:
-> docker container stop ${CONTAINER_ID}
+# Listar todos los contenedores que han salido con un estado específico
+docker container ls -a --filter "status=exited"
 
-# Stop all running containers:
-> docker container stop $(docker container ls -q)
+# Ver detalles del contenedor
+docker container inspect ${CONTAINER_ID}
 
-# List all exited containers with status 1:
-> docker container ls -a --filter "exited=1"
+# Encontrar la IP de un contenedor
+docker container inspect --format '{{ .NetworkSettings.IPAddress }}' ${CONTAINER_ID}
 
-# Remove a container:
-> docker container rm ${CONTAINER_ID}
+# Obtener el ID del contenedor para una imagen específica usando una expresión regular
+docker container ls | grep wildfly | awk '{print $1}'
 
-# Remove container by a regular expression:
-> docker container ls -a | grep wildfly | awk '{print $1}' | xargs docker container rm -f
+# Mostrar logs
+docker container logs ${CONTAINER_ID}
 
-# Remove all exited containers:
-> docker container rm -f $(docker container ls -a | grep Exit | awk '{ print $1 }')
+# Mostrar últimos logs
+docker container logs --tail 100 ${CONTAINER_ID}
 
-# Remove all containers:
-> docker container rm $(docker container ls -aq)
+# Ver estadísticas en tiempo real
+docker container stats ${CONTAINER_ID}
 
-# Find IP address of the container:
-> docker container inspect --format '{{ .NetworkSettings.IPAddress }}' ${CONTAINER_ID}
+# Abrir una shell interactiva en un contenedor
+docker container exec -it ${CONTAINER_ID} bash
 
-# Attach to a container:
-> docker container attach ${CONTAINER_ID}
+# Ejecutar un comando en el contenedor
+docker container exec ${CONTAINER_ID} <command>
 
-# Open a shell into a container:
-> docker container exec -it ${CONTAINER_ID} bash
+# Renombrar un contenedor
+docker container rename ${OLD_NAME} ${NEW_NAME}
 
-# Get container id for an image by a regular expression:
-> docker container ls | grep wildfly | awk '{print $1}'
+# Conectar a un contenedor
+docker container attach ${CONTAINER_ID}
+
+# Detener un contenedor
+docker container stop ${CONTAINER_ID}
+
+# Detener todos los contenedores en ejecución
+docker container stop $(docker container ls -q)
+
+# Eliminar un contenedor
+docker container rm ${CONTAINER_ID}
+
+# Eliminar contenedores que coincidan con una expresión regular
+docker container ls -a | grep wildfly | awk '{print $1}' | xargs docker container rm -f
+
+# Eliminar todos los contenedores que han salido
+docker container rm -f $(docker container ls -a --filter "status=exited" -q)
+
+# Eliminar todos los contenedores
+docker container rm $(docker container ls -aq)
 ```
 
 ### VOLUME
 
 ```bash
 # Eliminar volúmenes huérfanos (_'dangling'_)
-> docker volume rm $(docker volume ls -qf dangling=true)
+docker volume rm $(docker volume ls -qf dangling=true)
 ```
 
 ### OTHERS
 
 ```bash
-# Limpieza general del sistema:
-> docker system prune
+# Mostrar la versión de Docker
+docker --version
 
-# Show version
-> docker --version
+# Mostrar la versión del cliente y del servidor
+docker version
 
-# Show client and server version:
-> docker version
+# Proporciona un resumen completo del estado del daemon de Docker
+docker info
 
-# Start the daemon manually
-> dockerd
+# Comprobar y diagnosticar problemas de Docker
+docker system info
+
+# Muestra los registros del servicio de Docker en sistemas basados en 'systemd'
+journalctl -u docker
+
+# Muestra el uso de espacio en disco por imágenes, contenedores, y volúmenes
+docker system df
+
+# Limpieza general del sistema
+docker system prune
+
+# Iniciar el daemon manualmente
+dockerd
+
+# Verifica el estado del servicio Docker en sistemas que usan 'systemd'
+sudo systemctl status docker
+
+# Reinicia el servicio Docker  en sistemas que usan 'systemd'
+sudo systemctl restart docker
+
+# Permite especificar un archivo de configuración personalizado para el daemon de Docker
+docker daemon --config-file /path/to/config.json
+
+# Actualizar Docker a la última versión disponible
+sudo apt-get update && sudo apt-get upgrade docker-ce
 ```
 
 ---
@@ -244,12 +301,8 @@ Docker images are a lightweight, standalone, executable package of software that
 
 - <https://docs.docker.com/>
 - <https://docs.docker.com/language/java/>
-- <https://roadmap.sh/docker>
-- <https://github.com/veggiemonk/awesome-docker>
 - <https://github.com/wsargent/docker-cheat-sheet/tree/master/es-es>
 - <https://github.com/collabnix/dockerlabs/blob/master/docker/cheatsheet/README.md>
-- <https://containerd.io/>
-- <https://mobyproject.org/>
 
 ## Licencia
 
