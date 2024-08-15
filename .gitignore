@@ -2,7 +2,7 @@
 *.yaml
 *.html
 .npmrc
-PREVIO.md
+*.txt
 ## --------------------
 
 # Created by https://www.gitignore.io/api/java,gradle,windows,intellij+all,visualstudiocode

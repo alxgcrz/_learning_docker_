@@ -4,39 +4,39 @@
 
 ## Overview
 
-Docker permite empaquetar las aplicaciones en **contenedores** que incluyen todo lo neceario para que se puedan ejecutar en un entorno de manera aislada. Cada contenedor almacena el código fuente de la aplicación, los archivos de configuración y todas las dependencias software que necesita. Esta estrategia permite que las aplicaciones se puedan ejecutar de la misma manera sobre cualquier infraestructura que tenga soporte para Docker, tanto de forma local como en la nube.
+Docker permite empaquetar las aplicaciones en **contenedores** que incluyen todo lo necesario para que se puedan ejecutar en un **entorno aislado**. Cada contenedor almacena el código fuente de la aplicación, los archivos de configuración y todas las dependencias de software que necesita. Esta estrategia permite que las aplicaciones se puedan ejecutar de la misma manera sobre cualquier infraestructura que tenga soporte para Docker, tanto de forma local como en la nube.
 
-Con la tecnología de contenedores para aplicaciones, ya no es necesario preocuparse por el software que está instalado en la máquina donde se ejecuta el contenedor, porque todo lo que necesita la aplicación está incluido dentro del propio contenedor. Esta forma de trabajar resuelve el problema de 'it works on my machine', donde una aplicación puede funcionar correctamente en el entorno de desarrollo, pero tiene errores en el entorno de producciónm, porque los dos entornos no son idénticos y contienen versiones de software diferentes.
+Con la tecnología de contenedores para aplicaciones, ya no es necesario preocuparse por el software que está instalado en la máquina donde se ejecuta el contenedor, porque **todo lo que la aplicación necesita** está incluido dentro del propio contenedor. Esta forma de trabajar resuelve el problema de _'funciona en mi máquina'_, donde una aplicación puede funcionar correctamente en el entorno de desarrollo, pero tiene errores en el entorno de producción porque los dos entornos no son idénticos y contienen versiones de software diferentes.
 
 Cada vez hay más equipos de desarrollo y operaciones que están utilizando la tecnología de contenedores Docker en sus flujos de trabajo. Esto ha permitido acelerar el proceso de desarrollo de las aplicaciones, ha facilitado la forma de distribuirlas y ha acelerado la automatización del despliegue en producción.
 
 ### Máquina virtual vs contenedor
 
-Una **máquina virtual (VM)** es un entorno que emula la misma funcionalidad de una máquina física. Una máquina virtual hace uso de los recursos que se le hayan asignado, como por ejemplo su propia CPU, memoria, interfaz de red, almacenamiento y su propio sistema operativo.
+Una **máquina virtual (VM)** es un entorno que emula la misma funcionalidad de una máquina física. Una máquina virtual utiliza los **recursos** que se le han asignado, como por ejemplo su propia CPU, memoria, interfaz de red, almacenamiento y su propio sistema operativo.
 
-Las máquinas virtuales (VM) se crean y se ejecutan sobre un software llamado **hipervisor** o **_virtual machine monitor_ (VMM)**. El hipervisor se ejecuta sobre la máquina física y actúa como una capa intermedia entre el hardware de la máquina anfitriona o _'host'_ y la máquina virtual. El hipervisor se encarga de gestionar y distribuir los recursos de la máquina física entre las máquinas virtuales.
+Las máquinas virtuales (VM) se crean y se ejecutan sobre un software llamado **hipervisor** o **_virtual machine monitor_ (VMM)**. El hipervisor se ejecuta en la máquina física y actúa como una **capa intermedia** entre el hardware de la máquina anfitriona o _'host'_ y la máquina virtual. El hipervisor se encarga de **gestionar y distribuir** los recursos de la máquina física entre las máquinas virtuales.
 
-Es posible crear varias máquinas virtuales sobre una misma máquina física. Cada una de las máquinas virtuales estará aislada del resto, tendrá sus propios recursos y contará con su **propio sistema operativo**, que no tiene por qué ser el mismo que el de la máquina anfitriona.
+Es posible crear varias máquinas virtuales sobre una misma máquina física. Cada una de las máquinas virtuales estará aislada del resto, tendrá sus propios recursos y contará con su **propio sistema operativo**, que no necesariamente será el mismo que el de la máquina anfitriona.
 
-Un **contenedor** se puede definir como una unidad estándar de software que permite empaquetar el código fuente de una aplicación y todas sus dependencias, para que se pueda distribuir y ejecutar de forma rápida y fiable en diferentes entornos.
+Un **contenedor** se puede definir como una **unidad estándar de software** que permite empaquetar el código fuente de una aplicación y todas sus dependencias, para que se pueda **distribuir y ejecutar** de forma rápida y fiable en diferentes entornos.
 
-También se puede definir como un proceso que ha sido aislado de todos los demás procesos de la máquina anfitriona donde se está ejecutando. Aunque es posible tener más de un proceso en un contenedor, las buenas prácticas nos recomiendan ejecutar solo un proceso por contenedor.
+También se puede definir como un proceso que ha sido aislado de todos los demás procesos de la máquina anfitriona en la que está ejecutando. Aunque es posible tener más de un proceso en un contenedor, las buenas prácticas recomiendan ejecutar solo un proceso por contenedor.
 
-Los contenedores deben cumplir con los entándares abiertos de la industria de los contenedores software desarrollados por la **OCI (_Open Container Initiative_)**.
+Los contenedores deben cumplir con los **estándares abiertos** de la industria de los contenedores software desarrollados por la **OCI (_Open Container Initiative_)**.
 
-La **principal diferencia** entre una máquina virtual y un contenedor es que la máquina virtual necesita un sistema operativo completo para poder funcionar mientras que un contenedor no lo necesita ya que comparte el kernel del sistema operativo de la máquina donde se está ejecutando.
+La principal diferencia entre una máquina virtual y un contenedor es que la **máquina virtual necesita un sistema operativo** completo para poder funcionar mientras que un **contenedor no lo necesita** ya que comparte el kernel del sistema operativo de la máquina en la que se está ejecutando.
 
-Por tanto, los contenedores necesitan menos recursos que las máquinas virtuales. Con el mismo hardware es posible tener un mayor número de contenedores que de máquinas virtuales.
+Por lo tanto, **los contenedores requieren menos recursos** que las máquinas virtuales. Con el mismo hardware es posible tener un mayor número de contenedores que de máquinas virtuales.
 
 Además, los contenedores son más livianos y arrancan más rápido que las máquinas virtuales.
 
-Por último, un contenedor se puede ejecutar **dentro** de una máquina virtual pero no al revés.
+Por último, **un contenedor se puede ejecutar dentro de una máquina virtual** pero no al revés.
 
 ## La arquitectura Docker
 
-La arquitectura Docker fue diseñada de forma monólitica en un principio, pero más tarde fue rediseñada a una **arquitectura modular**, formada por diferentes componentes que pueden ser reemplazados e incluso utilizarse en otros proyectos.
+La arquitectura de Docker fue diseñada inicialmente de forma monolítica, pero más tarde fue rediseñada hacia una **arquitectura modular**, compuesta por diferentes componentes que pueden ser reemplazados e incluso utilizados en otros proyectos.
 
-Cada uno de los componentes de Docker se desarrolla por separado y muchos de ellos forman parte del [proyecto Moby](https://mobyproject.org/), que es un proyecto _open source_ creado por la compañía Docker Inc en 2017, donde se desarrollan componentes y herramientas que pueden ser utilizados para crear productos basados en la tecnología de contenedores.
+Cada uno de los componentes de Docker se desarrolla por separado y muchos de ellos forman parte del [**"Proyecto Moby"**](https://mobyproject.org/), un proyecto _open source_ creado por la compañía Docker Inc. en 2017, en el cual se desarrollan componentes y herramientas que pueden ser utilizadas para crear productos basados en la tecnología de contenedores.
 
 Los principales componentes de Docker que debemos conocer son:
 
@@ -59,61 +59,69 @@ Los principales componentes de Docker que debemos conocer son:
 
 ### Cliente Docker
 
-Docker utiliza una arquitectura **cliente-servidor**, donde una aplicación cliente interactúa con un servicio llamado **_Docker daemon_**. Un mismo cliente puede comunicarse con más de un servicio **_Docker daemon_**.
+Docker utiliza una arquitectura **cliente-servidor**, donde una aplicación cliente interactúa con un servicio llamado **_Docker Daemon_**. Un mismo cliente puede comunicarse con más de un servicio **_Docker Daemon_**.
 
 La comunicación entre cliente y servidor se realiza a través de una API HTTP conocida como **_Docker Engine API_**.
 
-Las aplicaciones oficiales que se pueden utilizar como cliente son **Docker CLI (_Command Line Interface_)** y **Docker Compose** aunque cualquier aplicación cliente que haga uso de la API de Docker Engine puede ser un cliente válido.
+Las aplicaciones oficiales que se pueden utilizar como cliente son **Docker CLI (_'Command Line Interface'_)** y **_Docker Compose_** aunque cualquier aplicación cliente que haga uso de la API de **_Docker Engine_** puede ser un cliente válido.
 
-El cliente y el servidor se pueden ejecutar en la **misma máquina** o pueden estar en **máquinas separadas**. Cuando están en la misma máquina la comunicación entre ambos se realiza a través de un **socket IPC** o un **socket TCP** mientras que cuando se encuentran en máquinas separadas la comunicación se realiza mediante un **socket TCP**.
+El cliente y el servidor se pueden ejecutar en la **misma máquina** o en **máquinas separadas**. Cuando están en la misma máquina, la comunicación entre ambos se realiza a través de un **socket IPC** o un **socket TCP**. En cambio, cuando se encuentran en máquinas separadas, la comunicación se realiza mediante un **socket TCP**.
 
 #### Docker CLI
 
-**Docker CLI** es el cliente oficial de Docker. Es una interfaz de línea de comandos que permite a los usuarios interaccionar con el servicio **_Docker daemon_**.
+**_Docker CLI_** es el cliente oficial de Docker. Es una interfaz de línea de comandos que permite a los usuarios interactuar con el servicio **_Docker Daemon_**.
 
 ```sh
 # Muestra la ayuda de Docker
 $ docker help
 ```
 
-El uso más habitual de **Docker CLI** es cuando se quiere interactuar con un **único contenedor**.
+El uso más habitual de **_Docker CLI_** es cuando se desea interactuar con un **único contenedor**.
 
 #### Docker Compose
 
-**Docker Compose** es una aplicación utilizada desde línea de comandos y permite a los usuarios interaccionar con el servicio **_Docker daemon_**.
+**_Docker Compose_** es una aplicación utilizada desde la línea de comandos que permite a los usuarios interactuar con el servicio **_Docker daemon_**.
 
 ```sh
 # Muestra la ayuda de Docker Compose
 $ docker compose help
 ```
 
-Esta aplicación permite definir y ejecutar aplicaciones con **múltiples contenedores**. Utiliza un archivo de configuración con formato YAML para definir los servicios, las redes y los volúmenes de los que consta la aplicación que queremos ejecutar.
+Esta aplicación permite definir y ejecutar aplicaciones con **múltiples contenedores**. Utiliza un archivo de configuración con formato YAML para definir los servicios, las redes y los volúmenes que componen la aplicación que se desea ejecutar.
 
-Una de las ventajas que nos ofrece **Docker Compose** es que solo hay que ejecutar un comando para crear y ejecutar todos los servicios que se han definido en el archivo YAML de configuración.
+Una de las ventajas que ofrece **_Docker Compose_** es que basta con ejecutar un solo comando para crear y ejecutar todos los servicios definidos en el archivo de configuración en formato YAML.
 
-En la actualidad hay dos versiones de **Docker Compose**:
+En la actualidad existen dos versiones de **_Docker Compose_**:
 
-- **v1**: tiene que ser instalada como herramienta adicional y se ejecuta con `docker-compose`
-- **v2**: integra el comando `compose` dentro del cliente oficial de Docker CLI. Por lo tanto la nueva versión se ejecuta con `docker compose`
+- **v1**: debe instalarse como una herramienta adicional y se ejecuta con `docker-compose`
+
+- **v2**: integra el comando `compose` dentro del cliente oficial de **_Docker CLI_**. Por lo tanto, la nueva versión se ejecuta con `docker compose`
 
 ### Docker Engine
 
-**Docker Engine** es el componente principal de Docker, encargado de crear, ejecutar y gestionar contenedores.
+**_Docker Engine_** es el componente principal de Docker, responsable de crear, ejecutar y gestionar contenedores.
 
-Tiene un diseño modular y está formado por varios componentes que cumplen con los estándares abiertos de la **OCI (_Open Container Initiative_)**:
+Tiene un diseño **modular** y está compuesto por varios componentes que cumplen con los estándares abiertos de la **OCI (_Open Container Initiative_)**:
 
-- Docker Engine API
-- Docker daemon (**componente principal**)
-- Container runtime (_containerd_)
+- _Docker Engine API_
+
+- _Docker Daemon_
+
+- _Container runtime_ (_containerd_)
+
 - Gestión de redes (_libnetwork_)
+
 - Creación de imágenes (_buildkit_)
+
 - Interacción con los registros de contenedores (_distribution_)
+
 - Soporte nativo para la orquestación de contenedores con Docker Swarm (_swarmkit_)
+
 - Gestión de plugins
 
-:warning: **Nota**: son proyectos que cumplen los estándares abiertos y están alojados en [Moby Project](https://mobyproject.org/projects/).
+> :warning: Estos son proyectos que cumplen los estándares abiertos y están alojados en [**"Moby Project"**](https://mobyproject.org/projects/).
 
-**Docker Engine** se ejecuta de forma nativa en los sistemas Linux y Windows Server. En el resto de los sistemas operativos de Windows y en los sistemas Mac se ejecuta sobre una máquina virtual Linux.
+**_Docker Engine_** se ejecuta de forma nativa en los sistemas Linux y Windows Server. En otros sistemas operativos de Windows y en macOS, se ejecuta sobre una máquina virtual Linux.
 
 #### Docker Engine API
 
@@ -136,6 +144,61 @@ Tiene un diseño modular y está formado por varios componentes que cumplen con 
 ### Docker Registry
 
 (TODO)
+
+## Objetos de Docker
+
+Los principales objetos de Docker son:
+
+- Imágenes
+- Contenedores
+- Volúmenes
+- Redes
+
+### Imágenes
+
+Las imágenes son **plantillas inmutables** que contienen el sistema de archivos y los parámetros necesarios para configurar un contenedor. Representan el estado inicial del sistema de archivos raíz del contenedor y pueden incluir aplicaciones preinstaladas, configuraciones y dependencias.
+
+Las imágenes se pueden crear manualmente utilizando un archivo llamado `Dockerfile`, que contiene una serie de instrucciones para ensamblar la imagen paso a paso. También es posible obtener imágenes predefinidas desde registros públicos como **_Docker Hub_**.
+
+Docker utiliza un **sistema de capas** para construir imágenes, lo que permite reutilizar partes comunes entre diferentes imágenes y optimizar el almacenamiento y la transferencia.
+
+A partir de una misma imagen, se pueden **crear múltiples contenedores**, lo que facilita la escalabilidad y consistencia en la implementación de aplicaciones.
+
+### Contenedores
+
+Un contenedor es una **instancia ejecutable de una imagen**. Representa una unidad de software ligera y autónoma que incluye todo lo necesario para ejecutar una aplicación.
+
+Puede crear, iniciar, detener, mover o eliminar un contenedor utilizando la API o la CLI de Docker. Además, es posible conectar un contenedor a una o más redes, adjuntar almacenamiento persistente o incluso crear una nueva imagen basada en el estado actual del contenedor mediante la ejecución de comandos como `docker commit`.
+
+De forma predeterminada, un contenedor está relativamente **aislado** de otros contenedores y de la máquina _host_. Este aislamiento incluye el sistema de archivos, la red y otros recursos del sistema. Sin embargo, Docker proporciona opciones para controlar el nivel de aislamiento según las necesidades específicas.
+
+Es importante notar que, a menos que se utilicen volúmenes o montajes de enlaces, los cambios realizados dentro de un contenedor no se preservan una vez que el contenedor se elimina.
+
+### Volúmenes
+
+Los volúmenes son el mecanismo que ofrece Docker para gestionar la **persistencia de datos** en los contenedores. Permiten almacenar datos fuera del sistema de archivos del contenedor, asegurando que la información persista incluso si el contenedor se elimina.
+
+Los volúmenes se pueden crear y gestionar utilizando comandos de Docker, como `docker volume create`. Una vez creados, pueden ser montados en uno o varios contenedores.
+
+El ciclo de vida de los volúmenes es independiente del ciclo de vida de los contenedores. Esto significa que los volúmenes permanecen **intactos y disponibles** para otros contenedores incluso después de que los contenedores que los utilizaban hayan sido eliminados.
+
+Además de los volúmenes, Docker también soporta montajes de enlaces (_'bind mounts'_), que permiten montar directorios o archivos específicos del sistema de archivos de la máquina host dentro de un contenedor.
+
+### Redes
+
+Docker proporciona capacidades avanzadas para la creación y gestión de redes, facilitando la **comunicación entre contenedores y con sistemas externos**.
+
+Docker soporta varios tipos de redes, incluyendo:
+
+- **_Bridge_** ➜ Es la red por defecto en Docker. Permite la comunicación entre contenedores en la misma máquina host.
+
+- **_Host_** ➜ Utiliza la pila de red de la máquina host, permitiendo que los contenedores compartan la misma dirección IP y puertos que el host.
+
+- **_Overlay_** ➜ Permite la comunicación entre contenedores que residen en diferentes máquinas host, comúnmente utilizada en configuraciones de clústeres y orquestación.
+
+- **_Macvlan_** ➜ Asigna una dirección MAC a cada contenedor, permitiendo que aparezcan como dispositivos físicos en la red.
+
+A través de comandos como `docker network create`, `docker network connect` y `docker network inspect`, los usuarios pueden crear redes personalizadas, conectar contenedores a ellas y obtener información detallada sobre su configuración.
 
 ## Appendix: Common Docker Commands
 
@@ -301,6 +364,7 @@ sudo apt-get update && sudo apt-get upgrade docker-ce
 
 - <https://docs.docker.com/>
 - <https://docs.docker.com/language/java/>
+- <https://cheatsheets.zip/docker>
 - <https://github.com/wsargent/docker-cheat-sheet/tree/master/es-es>
 - <https://github.com/collabnix/dockerlabs/blob/master/docker/cheatsheet/README.md>
 
