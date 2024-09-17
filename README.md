@@ -46,50 +46,59 @@ Los principales componentes de Docker que debemos conocer son:
 - Docker Engine
   - Docker Engine API
   - Docker Daemon
-- Container Runtime
-  - Containerd
-  - Runc
+  - Container Runtime
+    - Containerd
+    - Runc
 - Docker Registry
-
-<!-- markdownlint-disable MD033 -->
-<p align="center">
-    <img src="assets/docker-architecture.png" alt="docker architecture">
-</p>
-<!-- markdownlint-enable MD033 -->
 
 ### Cliente Docker
 
 Docker utiliza una arquitectura **cliente-servidor**, donde una aplicación cliente interactúa con un servicio llamado **_Docker Daemon_**. Un mismo cliente puede comunicarse con más de un servicio **_Docker Daemon_**.
 
-La comunicación entre cliente y servidor se realiza a través de una API HTTP conocida como **_Docker Engine API_**.
+El **_Docker Daemon_** es el proceso que administra los objetos de Docker, como contenedores, imágenes, redes y volúmenes, y se encarga de ejecutar las instrucciones enviadas por el cliente.
+
+La comunicación entre cliente y servidor se realiza a través de una API HTTP conocida como **_Docker Engine API_**, que permite la interacción mediante comandos HTTP, posibilitando la automatización y la integración con otras herramientas de terceros en procesos de CI/CD.
 
 Las aplicaciones oficiales que se pueden utilizar como cliente son **Docker CLI (_'Command Line Interface'_)** y **_Docker Compose_** aunque cualquier aplicación cliente que haga uso de la API de **_Docker Engine_** puede ser un cliente válido.
 
 El cliente y el servidor se pueden ejecutar en la **misma máquina** o en **máquinas separadas**. Cuando están en la misma máquina, la comunicación entre ambos se realiza a través de un **socket IPC** o un **socket TCP**. En cambio, cuando se encuentran en máquinas separadas, la comunicación se realiza mediante un **socket TCP**.
 
+Es importante considerar la seguridad al utilizar **sockets TCP** en máquinas separadas, recomendándose la configuración de conexiones seguras mediante SSL/TLS para proteger la comunicación.
+
 #### Docker CLI
 
-**_Docker CLI_** es el cliente oficial de Docker. Es una interfaz de línea de comandos que permite a los usuarios interactuar con el servicio **_Docker Daemon_**.
+**_Docker CLI_** es el cliente oficial de Docker. Es una interfaz de línea de comandos que permite a los usuarios interactuar con el servicio **_Docker Daemon_** para ejecutar, gestionar y supervisar contenedores.
 
 ```sh
 # Muestra la ayuda de Docker
 $ docker help
 ```
 
-El uso más habitual de **_Docker CLI_** es cuando se desea interactuar con un **único contenedor**.
+El uso más habitual de **_Docker CLI_** es para interactuar con **contenedores individuales**, aunque también permite gestionar redes, volúmenes e imágenes.
 
 #### Docker Compose
 
-**_Docker Compose_** es una aplicación utilizada desde la línea de comandos que permite a los usuarios interactuar con el servicio **_Docker daemon_**.
+**_Docker Compose_** es una herramienta que permite definir y ejecutar aplicaciones con **múltiples contenedores**. Utiliza un archivo de configuración con formato YAML para definir los servicios, las redes y los volúmenes que componen la aplicación.
 
 ```sh
 # Muestra la ayuda de Docker Compose
 $ docker compose help
 ```
 
-Esta aplicación permite definir y ejecutar aplicaciones con **múltiples contenedores**. Utiliza un archivo de configuración con formato YAML para definir los servicios, las redes y los volúmenes que componen la aplicación que se desea ejecutar.
+Una de las ventajas que ofrece **_Docker Compose_** es que basta con ejecutar un solo comando para crear y ejecutar todos los servicios definidos en el archivo de configuración en formato YAML:
 
-Una de las ventajas que ofrece **_Docker Compose_** es que basta con ejecutar un solo comando para crear y ejecutar todos los servicios definidos en el archivo de configuración en formato YAML.
+```yml
+version: '3'
+services:
+  web:
+    image: nginx
+    ports:
+      - "8080:80"
+  db:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+```
 
 En la actualidad existen dos versiones de **_Docker Compose_**:
 
@@ -164,6 +173,10 @@ Docker utiliza un **sistema de capas** para construir imágenes, lo que permite 
 
 A partir de una misma imagen, se pueden **crear múltiples contenedores**, lo que facilita la escalabilidad y consistencia en la implementación de aplicaciones.
 
+Las imágenes se construyen normalmente para ejecutar un **solo proceso**. Si la aplicación necesita trabajar con otros servicios, se ejecutan esos servicios en sus propios contenedores y se orquestan para que todos los contenedores puedan trabajar juntos.
+
+Cuando ejecuta un contenedor desde una imagen, puede ser una aplicación de corta duración que ejecuta alguna funcionalidad y luego termina; puede ser una aplicación de larga duración que se ejecuta como un servicio de fondo; o puede ser un contenedor interactivo con el que se puede conectar como si fuera una máquina remota.
+
 ### Contenedores
 
 Un contenedor es una **instancia ejecutable de una imagen**. Representa una unidad de software ligera y autónoma que incluye todo lo necesario para ejecutar una aplicación.
@@ -173,6 +186,12 @@ Puede crear, iniciar, detener, mover o eliminar un contenedor utilizando la API 
 De forma predeterminada, un contenedor está relativamente **aislado** de otros contenedores y de la máquina _host_. Este aislamiento incluye el sistema de archivos, la red y otros recursos del sistema. Sin embargo, Docker proporciona opciones para controlar el nivel de aislamiento según las necesidades específicas.
 
 Es importante notar que, a menos que se utilicen volúmenes o montajes de enlaces, los cambios realizados dentro de un contenedor no se preservan una vez que el contenedor se elimina.
+
+En Docker, existen contenedores que se ejecutan y salen automáticamente cuando no hay procesos activos en su interior. Este tipo de contenedor es especialmente útil para tareas repetitivas como copias de seguridad, creación de infraestructura en la nube o procesamiento de mensajes, ya que permiten automatizar y simplificar estos procesos. Por otro lado, Docker también es ideal para manejar procesos en segundo plano de larga duración, como servidores web. Gracias a su capacidad para utilizar recursos solo cuando es necesario, Docker permite ejecutar múltiples contenedores en máquinas modestas, optimizando así el uso del hardware.
+
+Un ejemplo práctico de esto es la ejecución de un contenedor de Nginx en segundo plano, lo que hace que el servidor web sea accesible en el puerto 80 del host. Docker genera un ID único para cada contenedor y, si no se especifica un nombre, asigna uno aleatorio. Este enfoque asegura que el contenedor siga funcionando en segundo plano una vez iniciado, permitiendo un acceso continuo al servicio.
+
+Además, Docker permite ejecutar contenedores de forma interactiva, permaneciendo en ejecución mientras la conexión esté activa y comportándose como una máquina remota. Esto es útil para evaluar imágenes, utilizar herramientas de software o seguir pasos en la creación de nuevas imágenes. Las imágenes de Ubuntu, por ejemplo, son populares en Docker debido a su tamaño reducido, lo que minimiza vulnerabilidades. Sin embargo, cualquier cambio realizado en estos contenedores no se guarda al reiniciarlos, manteniendo la imagen en su estado original.
 
 ### Volúmenes
 
@@ -411,10 +430,8 @@ sudo apt-get update && sudo apt-get upgrade docker-ce
 ## Referencias
 
 - <https://docs.docker.com/>
-- <https://docs.docker.com/language/java/>
+- <https://roadmap.sh/docker>
 - <https://cheatsheets.zip/docker>
-- <https://github.com/wsargent/docker-cheat-sheet/tree/master/es-es>
-- <https://github.com/collabnix/dockerlabs/blob/master/docker/cheatsheet/README.md>
 
 ## Licencia
 
