@@ -46,9 +46,9 @@ Los principales componentes de Docker que debemos conocer son:
 - Docker Engine
   - Docker Engine API
   - Docker Daemon
-  - Container Runtime
-    - Containerd
-    - Runc
+- Container Runtime
+  - Containerd
+  - Runc
 - Docker Registry
 
 ### Cliente Docker
@@ -110,17 +110,17 @@ En la actualidad existen dos versiones de **_Docker Compose_**:
 
 **_Docker Engine_** es el componente principal de Docker, responsable de crear, ejecutar y gestionar contenedores.
 
-Tiene un diseño **modular** y está compuesto por varios componentes que cumplen con los estándares abiertos de la **OCI (_Open Container Initiative_)**:
+Tiene un **diseño modular** y está compuesto por varios componentes que cumplen con los estándares abiertos de la **OCI (_Open Container Initiative_)**:
 
 - _Docker Engine API_
 
-- _Docker Daemon_
+- _Docker Daemon_ (componente principal)
 
 - _Container runtime_ (_containerd_)
 
 - Gestión de redes (_libnetwork_)
 
-- Creación de imágenes (_buildkit_)
+- Creación de imágenes ([_buildkit_](https://docs.docker.com/build/buildkit/))
 
 - Interacción con los registros de contenedores (_distribution_)
 
@@ -134,7 +134,21 @@ Tiene un diseño **modular** y está compuesto por varios componentes que cumple
 
 #### Docker Engine API
 
-(TODO)
+La comunicación entre un cliente Docker y el servicio **_Docker Daemon_** se realiza a través de una API HTTP conocida como **_Docker Engine API_**.
+
+Esta API implementa todas las operaciones que un usuario puede realizar desde un cliente Docker. Por ejemplo, cuando un usuario ejecuta el comando `docker ps` desde la línea de comandos, el cliente Docker está haciendo una petición GET al _endpoint_ `/containers/json`.
+
+La API puede cambiar cada vez que se libera una nueva versión de **_Docker Engine_**. Para mantener la compatibilidad, en los _endpoints_ se un incluye un prefijo en la URL para indicar la versión, como por ejemplo `/v1.41/containers/json` o `/v1.40/containers/json`. Si el cliente no especifica una versión, Docker usa la versión más reciente compatible.
+
+En la documentación de Docker se puede consultar la [referencia completa de la API](https://docs.docker.com/reference/api/engine/)
+
+Como demostración, se puede hacer uso de la herramienta `curl` para hacer la petición y `jq` para formatear la salida JSON. Con el siguiente comando se puede hacer una petición directa al _endpoint_ que nos devolverá la lista de imágenes sin hacer uso del cliente Docker:
+
+```bash
+curl --unix-socket /var/run/docker.sock http://localhost/v1.47/images/json | jq
+```
+
+En este ejemplo, se utiliza un socket UNIX porque el cliente y el servicio **_Docker Daemon_** están en la misma máquina.
 
 #### Docker daemon
 
