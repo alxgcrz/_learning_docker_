@@ -152,21 +152,66 @@ En este ejemplo, se utiliza un socket UNIX porque el cliente y el servicio **_Do
 
 #### Docker daemon
 
-(TODO)
+El servicio **_Docker Daemon_** es el encargado de crear y gestionar todos los objetos con los que trabaja Docker, como las imágenes, los contenedores, las redes y los volúmenes. Este servicio se ejecuta en un proceso llamado _'dockerd'_.
+
+El servicio **_Docker Daemon_** expone una API HTTP, y los clientes Docker se comunican con el **_Docker Daemon_** mediante esta API, utilizando tres tipos diferentes de _sockets_: `unix`, `tcp` y `fd`. A su vez, este **_Docker Daemon_** se comunica con el _'container runtime'_.
+
+En versiones anteriores, el **_Docker Daemon_** también incluía el _'container runtime'_ pero actualmente, son componentes independientes.
+
+El _'container runtime'_ está formado por **_'containerd'_** y **_'runc'_**. _'containerd'_ se encarga de las operaciones de alto nivel (como la gestión de imágenes y la supervisión de contenedores), mientras que _'runc'_ ejecuta los contenedores propiamente dichos a nivel de sistema operativo.
+
+En una instalación típica, el cliente Docker y el **_Docker Daemon_** se encuentran en la misma máquina. Para contenedores en Linux, se utiliza un _socket_ de tipo UNIX. Para contenedores en Windows, se utiliza un _'named pipe'_.
+
+En entornos donde el cliente Docker y el **_Docker Daemon_** están en máquinas distintas, se utiliza un _socket_ de tipo TCP. Por defecto, esta comunicación se realiza sobre un canal no cifrado en el puerto 2375, adecuado para entornos de desarrollo. Para entornos de producción, es necesario usar una conexión cifrada con TLS, comúnmente utilizando el puerto 2376.
 
 #### Container runtime
 
+El **_'container runtime'_** es el software encargado de ejecutar los contenedores Docker:
+
+- **_'containerd'_**: _'container runtime'_ de alto nivel
+
+- **_'runc'_**: _'container runtime'_ de bajo nivel
+
 ##### _containerd_
 
-(TODO)
+**_containerd_** es el componente responsable de gestionar el ciclo de vida de un contenedor dentro de un _host_. Realiza tareas como descargar las imágenes desde los registros de los contenedores, almacenarlas en el _host_, supervisar la ejecución de los contenedores y gestionar el almacenamiento y las redes asociadas.
+
+Este componente puede ser utilizado desde la línea de comandos a través del cliente _ctr_, que se incluye por defecto con la instalación de _containerd_:
+
+```bash
+# Muestra la ayuda del comando
+$ ctr help
+```
+
+El componente _containerd_ también implementa la interfaz CRI (_Container Runtime Interface_) de Kubernetes. Esto significa que este _'container runtime'_ puede ser utilizado en un _cluster_ de Kubernetes para crear y ejecutar contenedores a partir de imágenes Docker, que son compatibles con la especificación OCI (_Open Container Initiative_).
 
 ##### _runc_
 
-(TODO)
+**_runc_** es un componente de bajo nivel encargado de interactuar directamente con el _kernel_ del sistema operativo del _host_ donde se ejecutan los contenedores. Utiliza la librería **_libcontainer_** para gestionar esta interacción con el sistema operativo.
+
+Es una implementación de código abierto de la **_OCI Runtime Specification_**, que define cómo deben configurarse, ejecutarse y gestionarse los contenedores a lo largo de su ciclo de vida.
 
 ### Docker Registry
 
-(TODO)
+Un **_Docker Registry_** es un servicio encargado de almacenar y distribuir repositorios de imágenes Docker.
+
+Un repositorio de imágenes es un conjunto de imágenes que se agrupan bajo el mismo nombre dentro del registro. Cada imagen en un repositorio está etiquetada con un **_tag_**, que generalmente se utiliza para indicar su versión.
+
+**_Docker Hub_** es el **registro de contenedores oficial** de Docker. Este registro viene configurado por defecto al instalar **_Docker Engine_**, aunque puede ser reemplazado por otros registros de contenedores.
+
+Algunos de los registros disponibles son:
+
+- [Docker Hub (oficial)](https://hub.docker.com/)
+
+- [Github Container Registry](https://docs.github.com/es/packages)
+
+- [DigitalOcean Container Registry](https://www.digitalocean.com/products/container-registry)
+
+- [Amazon Elastic Container Registry](https://aws.amazon.com/es/ecr/)
+
+- [Azure Container Registry](https://azure.microsoft.com/es-es/products/container-registry)
+
+- [Google Cloud Container Registry](https://cloud.google.com/artifact-registry)
 
 ## Objetos de Docker
 
@@ -187,9 +232,9 @@ Docker utiliza un **sistema de capas** para construir imágenes, lo que permite 
 
 A partir de una misma imagen, se pueden **crear múltiples contenedores**, lo que facilita la escalabilidad y consistencia en la implementación de aplicaciones.
 
-Las imágenes se construyen normalmente para ejecutar un **solo proceso**. Si la aplicación necesita trabajar con otros servicios, se ejecutan esos servicios en sus propios contenedores y se orquestan para que todos los contenedores puedan trabajar juntos.
+Las imágenes suelen construirse para ejecutar un **solo proceso**. Si la aplicación necesita trabajar con otros servicios, se ejecutan esos servicios en sus propios contenedores y se orquestan para que todos los contenedores puedan colaborar entre sí.
 
-Cuando ejecuta un contenedor desde una imagen, puede ser una aplicación de corta duración que ejecuta alguna funcionalidad y luego termina; puede ser una aplicación de larga duración que se ejecuta como un servicio de fondo; o puede ser un contenedor interactivo con el que se puede conectar como si fuera una máquina remota.
+Al ejecutar un contenedor desde una imagen, este puede de corta duración, ejecutando alguna funcionalidad y luego terminando; puede ser una aplicación de larga duración que se ejecuta como un servicio de fondo; o puede ser un contenedor interactivo con el que se puede conectar como si fuera una máquina remota.
 
 ### Contenedores
 
