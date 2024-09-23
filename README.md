@@ -78,14 +78,14 @@ El uso más habitual de **_Docker CLI_** es para interactuar con **contenedores 
 
 #### Docker Compose
 
-**_Docker Compose_** es una herramienta que permite definir y ejecutar aplicaciones con **múltiples contenedores**. Utiliza un archivo de configuración con formato YAML para definir los servicios, las redes y los volúmenes que componen la aplicación.
+**_Docker Compose_** es una herramienta que permite definir, ejecutar y gestionar aplicaciones con **múltiples contenedores** en un sólo _host_. Utiliza un archivo de configuración con formato YAML para definir los servicios, las redes y los volúmenes que componen la aplicación.
 
 ```sh
 # Muestra la ayuda de Docker Compose
 $ docker compose help
 ```
 
-Una de las ventajas que ofrece **_Docker Compose_** es que basta con ejecutar un solo comando para crear y ejecutar todos los servicios definidos en el archivo de configuración en formato YAML:
+Una de las ventajas que ofrece **_Docker Compose_** es que basta con ejecutar un solo comando para crear y ejecutar todos los servicios definidos en el archivo de configuración:
 
 ```yml
 version: '3'
@@ -99,6 +99,10 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: example
 ```
+
+**_Docker Compose_** es ideal para entornos de desarrollo local o para manejar aplicaciones que no requieren orquestación compleja. Es excelente para definir pilas de aplicaciones (e.g., una aplicación con un servidor web, base de datos y servicio de caché) en un solo _host_.
+
+**_Docker Compose_** no solo gestiona los servicios, sino también las redes y volúmenes. Puedes definir cómo los servicios se comunican entre sí y si ciertos volúmenes son compartidos o persistentes, lo que es ideal para casos donde las aplicaciones requieren bases de datos u otros servicios que dependen de almacenamiento persistente.
 
 En la actualidad existen dos versiones de **_Docker Compose_**:
 
@@ -242,29 +246,35 @@ Un contenedor es una **instancia ejecutable de una imagen**. Representa una unid
 
 Puede crear, iniciar, detener, mover o eliminar un contenedor utilizando la API o la CLI de Docker. Además, es posible conectar un contenedor a una o más redes, adjuntar almacenamiento persistente o incluso crear una nueva imagen basada en el estado actual del contenedor mediante la ejecución de comandos como `docker commit`.
 
-De forma predeterminada, un contenedor está relativamente **aislado** de otros contenedores y de la máquina _host_. Este aislamiento incluye el sistema de archivos, la red y otros recursos del sistema. Sin embargo, Docker proporciona opciones para controlar el nivel de aislamiento según las necesidades específicas.
+De forma predeterminada, un contenedor está relativamente **aislado** de otros contenedores y de la máquina _host_. Este aislamiento abarca el sistema de archivos, la red y otros recursos del sistema. Sin embargo, Docker proporciona opciones para controlar el nivel de aislamiento según las necesidades específicas.
 
-Es importante notar que, a menos que se utilicen volúmenes o montajes de enlaces, los cambios realizados dentro de un contenedor no se preservan una vez que el contenedor se elimina.
+Es importante notar que, a menos que se utilicen volúmenes o montajes de enlaces, **los cambios realizados dentro de un contenedor no se preservan** una vez que el contenedor se elimina.
 
-En Docker, existen contenedores que se ejecutan y salen automáticamente cuando no hay procesos activos en su interior. Este tipo de contenedor es especialmente útil para tareas repetitivas como copias de seguridad, creación de infraestructura en la nube o procesamiento de mensajes, ya que permiten automatizar y simplificar estos procesos. Por otro lado, Docker también es ideal para manejar procesos en segundo plano de larga duración, como servidores web. Gracias a su capacidad para utilizar recursos solo cuando es necesario, Docker permite ejecutar múltiples contenedores en máquinas modestas, optimizando así el uso del hardware.
+En Docker, existen contenedores que se ejecutan y se detienen automáticamente cuando no hay procesos activos en su interior. Este tipo de contenedor es especialmente útil para tareas repetitivas como copias de seguridad, creación de infraestructura en la nube o procesamiento de mensajes, ya que permite automatizar y simplificar estos procesos. Por otro lado, Docker también es ideal para manejar procesos en segundo plano de larga duración, como servidores web. Gracias a su capacidad para utilizar recursos solo cuando es necesario, Docker permite ejecutar múltiples contenedores en máquinas modestas, optimizando así el uso del hardware.
 
-Un ejemplo práctico de esto es la ejecución de un contenedor de Nginx en segundo plano, lo que hace que el servidor web sea accesible en el puerto 80 del host. Docker genera un ID único para cada contenedor y, si no se especifica un nombre, asigna uno aleatorio. Este enfoque asegura que el contenedor siga funcionando en segundo plano una vez iniciado, permitiendo un acceso continuo al servicio.
+Un ejemplo práctico de esto es la ejecución de un contenedor de Nginx en segundo plano, lo que hace que el servidor web sea accesible en el puerto 80 del _host_. Docker genera un ID único para cada contenedor y, si no se especifica un nombre, asigna uno aleatorio. Este enfoque asegura que el contenedor siga funcionando en segundo plano una vez iniciado, permitiendo un acceso continuo al servicio.
 
-Además, Docker permite ejecutar contenedores de forma interactiva, permaneciendo en ejecución mientras la conexión esté activa y comportándose como una máquina remota. Esto es útil para evaluar imágenes, utilizar herramientas de software o seguir pasos en la creación de nuevas imágenes. Las imágenes de Ubuntu, por ejemplo, son populares en Docker debido a su tamaño reducido, lo que minimiza vulnerabilidades. Sin embargo, cualquier cambio realizado en estos contenedores no se guarda al reiniciarlos, manteniendo la imagen en su estado original.
+Además, Docker permite ejecutar contenedores de **forma interactiva**, permaneciendo en ejecución mientras la conexión esté activa y comportándose como una máquina remota. Esto es útil para evaluar imágenes, utilizar herramientas de software o seguir pasos en la creación de nuevas imágenes. Las imágenes de Ubuntu, por ejemplo, son populares en Docker debido a su tamaño reducido, lo que minimiza vulnerabilidades. Sin embargo, cualquier cambio realizado en estos contenedores no se guarda al reiniciarlos, manteniendo la imagen en su estado original.
+
+Hay dos tipos de contenedores:
+
+- **Contenedores Linux**: estos contenedores se pueden ejecutar en los sistemas operativos Linux, macOS y Windows. En macOS y Windows, Docker utiliza una máquina virtual ligera (basada en Linux) para ejecutar estos contenedores, ya que necesitan el núcleo de Linux para funcionar. Solo cuando se ejecutan sobre un sistema operativo Linux pueden utilizar directamente el kernel del sistema operativo anfitrión, lo que les permite ser más eficientes en cuanto a recursos.
+
+- **Contenedores Windows**: estos contenedores sólo se pueden ejecutar en sistemas operativos Windows y Windows Server. A diferencia de los contenedores Linux, los contenedores Windows utilizan el kernel de Windows y requieren un sistema operativo Windows de la misma versión o similar para poder funcionar. Esto significa que no se pueden ejecutar contenedores Windows en sistemas basados en Linux sin usar alguna solución de virtualización adicional.
 
 ### Volúmenes
 
 Los volúmenes son el mecanismo que ofrece Docker para gestionar la **persistencia de datos** en los contenedores. Permiten almacenar datos fuera del sistema de archivos del contenedor, asegurando que la información persista incluso si el contenedor se elimina.
 
-Los volúmenes se pueden crear y gestionar utilizando comandos de Docker, como `docker volume create`. Una vez creados, pueden ser montados en uno o varios contenedores.
+Pueden ser creados y gestionados con comandos de Docker, como `docker volume create`. Una vez creados, los volúmenes pueden ser montados en uno o varios contenedores, permitiendo compartir datos entre ellos.
 
-El ciclo de vida de los volúmenes es independiente del ciclo de vida de los contenedores. Esto significa que los volúmenes permanecen **intactos y disponibles** para otros contenedores incluso después de que los contenedores que los utilizaban hayan sido eliminados.
+El ciclo de vida de los volúmenes es **independiente** del ciclo de vida de los contenedores. Esto significa que los volúmenes permanecen disponibles para otros contenedores incluso después de que los contenedores que los utilizaban hayan sido eliminados.
 
-Además de los volúmenes, Docker también soporta montajes de enlaces (_'bind mounts'_), que permiten montar directorios o archivos específicos del sistema de archivos de la máquina host dentro de un contenedor.
+Además de los volúmenes, Docker también soporta montajes de enlaces (_'bind mounts'_), que permiten montar directorios o archivos específicos del sistema de archivos de la máquina host dentro de un contenedor, proporcionando mayor flexibilidad para interactuar directamente con los datos del _host_.
 
 ### Redes
 
-Docker proporciona capacidades avanzadas para la creación y gestión de redes, facilitando la **comunicación entre contenedores y con sistemas externos**.
+Docker proporciona capacidades avanzadas para la creación y gestión de redes, facilitando la **comunicación entre contenedores y con sistemas externos**. El componente principal de **_Docker Engine_** que se encarga de la gestión de las redes es _libnetwork_.
 
 Docker soporta varios tipos de redes, incluyendo:
 
@@ -276,7 +286,45 @@ Docker soporta varios tipos de redes, incluyendo:
 
 - **_Macvlan_** ➜ Asigna una dirección MAC a cada contenedor, permitiendo que aparezcan como dispositivos físicos en la red.
 
+- **_None_** ➜ Desconecta el contenedor de cualquier red. Ideal cuando se busca aislamiento total y no se desea comunicación externa.
+
 A través de comandos como `docker network create`, `docker network connect` y `docker network inspect`, los usuarios pueden crear redes personalizadas, conectar contenedores a ellas y obtener información detallada sobre su configuración.
+
+## Orquestación de contenedores
+
+En muchas situaciones, podemos necesitar que las aplicaciones se ejecuten sobre un **_cluster_** de servidores para garantizar la alta disponibilidad y escalabilidad de los servicios.
+
+Para desplegar una aplicación basada en contenedores en un _cluster_, se necesitan herramientas conocidas como **orquestadores de contenedores**. Las más conocidas dentro del ecosistema de Docker son **Docker Swarm** y **Kubernetes**.
+
+Entre las tareas más destacadas de un orquestador de contenedores podemos encontrar:
+
+- Automatizar el despliegue de una aplicación en un _cluster_ de servidores.
+
+- Crear y ejecutar los contenedores entre los diferentes nodos del _cluster_.
+
+- Balancear la carga entre todos los contenedores.
+
+- Escalar los servicios de forma automática cuando sea necesario.
+
+- Permitir que una aplicación se recupere automáticamente de los errores.
+
+- Posibilita actualizar una aplicación sin que exista tiempo de inactividad.
+
+### Docker Swarm
+
+**_Docker Swarm_** es un orquestador que viene integrado de forma nativa en **_Docker Engine_**. Este orquestador, desarrollado por Docker, forma parte del [**"Proyecto Moby"**](https://mobyproject.org/) con el nombre de **_SwarmKit_**.
+
+**_Docker Swarm_** es una opción ideal para aquellos que buscan una solución de orquestación sencilla y totalmente integrada dentro del ecosistema Docker, lo que facilita su implementación sin necesidad de herramientas externas.
+
+### Kubernetes
+
+Kubernetes, también conocido como **K8s**, es el orquestador más utilizado en la actualidad.
+
+Este orquestador fue desarrollado originalmente por Google, pero fue donado a la **_Cloud Native Computing Foundation (CNCF)_**.
+
+Kubernetes puede utilizar diferentes _'container runtimes'_ para ejecutar contenedores. El único requisito es que sean compatibles con una API llamada **_Container Runtime Interface (CRI)_**.
+
+Kubernetes es compatible con _containerd_, que es el _'container runtime'_ que utiliza **_Docker Engine_**. Por lo tanto, en un _cluster_ de Kubernetes se pueden crear y ejecutar contenedores a partir de imágenes Docker, que cumplen con la especificación OCI.
 
 ## Appendix: Common Docker Commands
 
@@ -491,6 +539,8 @@ sudo apt-get update && sudo apt-get upgrade docker-ce
 - <https://docs.docker.com/>
 - <https://roadmap.sh/docker>
 - <https://cheatsheets.zip/docker>
+- [Open Container Initiative (OCI)](https://opencontainers.org/)
+- [Cloud Native Computing Foundation (CNCF)](https://www.cncf.io/)
 
 ## Licencia
 
