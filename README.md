@@ -538,7 +538,7 @@ sudo apt-get update && sudo apt-get upgrade docker-ce
 
 ### Docker
 
-- ⭐[Docker - Build, Ship, and Run Any App, Anywhere](https://www.docker.com/)
+- 🔸 [Docker - Build, Ship, and Run Any App, Anywhere](https://www.docker.com/)
 - [Docker - Explore official repositories](https://hub.docker.com/)
 - 👓 <https://github.com/veggiemonk/awesome-docker>
 - [Moby is an open framework created by Docker to assemble specialized container systems](https://mobyproject.org/)
@@ -553,9 +553,9 @@ sudo apt-get update && sudo apt-get upgrade docker-ce
 
 ### Docker - Container
 
-- [Open Container Initiative (OCI)](https://opencontainers.org/)
-- [Cloud Native Computing Foundation (CNCF)](https://www.cncf.io/)
-- [Containerd - An industry-standard container runtime](https://containerd.io/)
+- ⭐ [Open Container Initiative (OCI)](https://opencontainers.org/)
+- ⭐ [Cloud Native Computing Foundation (CNCF)](https://www.cncf.io/)
+- ⭐ [Containerd - An industry-standard container runtime](https://containerd.io/)
 - [Welcome to the Oracle Container Registry](https://container-registry.oracle.com/)
 - [LXC - Linux Containers](https://linuxcontainers.org/)
 - [The Fn project is an open-source container-native serverless platform that you can run anywhere](https://fnproject.io/)
@@ -576,7 +576,7 @@ sudo apt-get update && sudo apt-get upgrade docker-ce
 
 ### Docker - Applications
 
-- ⭐ [Bitnami - Packaged Applications for Any Platform](https://bitnami.com/)
+- [Bitnami - Packaged Applications for Any Platform](https://bitnami.com/)
 - [TurnKey GNU/Linux: 100+ free ready-to-use system images for virtual machines, the cloud, and bare metal.](https://www.turnkeylinux.org/)
 
 ## Licencia
