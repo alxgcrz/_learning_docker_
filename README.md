@@ -326,79 +326,72 @@ Kubernetes puede utilizar diferentes _'container runtimes'_ para ejecutar conten
 
 Kubernetes es compatible con _containerd_, que es el _'container runtime'_ que utiliza **_Docker Engine_**. Por lo tanto, en un _cluster_ de Kubernetes se pueden crear y ejecutar contenedores a partir de imágenes Docker, que cumplen con la especificación OCI.
 
-## Appendix: Common Docker Commands
+## Appendix: Common Docker Commands [(:rocket:)](https://docs.docker.com/reference/cli/docker/)
 
-### Images
+### Images [(:rocket:)](https://docs.docker.com/reference/cli/docker/image/)
 
 ```bash
-# Comandos de 'image'
+# Subcomandos de 'image'
 docker image --help
 
 # Listar todas las imágenes instaladas localmente
 # Aliases 'docker image list', 'docker images'
-docker image ls [OPTIONS] [REPOSITORY[:TAG]]
+docker image ls
  
 # Mostrar información detallada sobre una imagen específica
-docker image inspect [OPTIONS] IMAGE [IMAGE...]
+docker image inspect [image_id]
 
 # Ver historial de instrucciones de una imagen
 # Aliases 'docker history'
-docker image history [OPTIONS] IMAGE
+docker image history [image_id]
 
-# Etiquetar una imagen existente
-# Aliases 'docker tag'
-docker image tag SOURCE_IMAGE[:TAG] TARGET_IMAGE[:TAG]
-
-# Eliminar una imagen específica
+# Eliminar una imagen específica a partir de su ID
 # Aliases 'docker image remove', 'docker rmi'
-docker image rm [OPTIONS] IMAGE [IMAGE...]
+docker image rm [image_id]
+
+# Eliminar una imagen específica a partir de su nombre (y tag)
+docker image rm [nombre_imagen:etiqueta]
 
 # Eliminar todas las imágenes
 docker image rm $(docker image ls --all --quiet)  # -aq
 
 # Eliminar imágenes sin etiqueta (o 'dangling') no asociadas a contenedores activos
-docker image prune [OPTIONS]
+docker image prune
 
-# Eliminar imágenes sin etiquetar e imágenes etiquetadas no asociadas a contenedores activos
+# Eliminar imágenes sin etiquetar y etiquetadas no asociadas a contenedores activos
 docker image prune --all
 ```
 
 #### Docker Hub
 
 ```bash
-# Autenticarse en el registro predeterminado de Docker (Docker Hub)
-docker login [OPTIONS]
+# Autenticarse en un registro
+docker login
 
-# Autenticarse en un registro local como puede ser un servidor local
-docker login [OPTIONS] [SERVER]
-
-# Cerrar sesión
+# Cerrar sesión del registro
 docker logout
 
-# Cerrar sesión de un registro local
-docker logout [SERVER]
-
 # Buscar una imagen por algún término en Docker Hub
-docker search [OPTIONS] TERM
+docker search [término_de_búsqueda]
 
 # Descarga una imagen de Docker Hub
 # Aliases 'docker pull'
-docker image pull [OPTIONS] NAME[:TAG|@DIGEST]
+docker image pull [nombre[:tag]]
 
 # Subir una imagen a Docker Hub
 # Aliases 'docker push'
-docker image push [OPTIONS] NAME[:TAG]
+docker image push [nombre[:tag]]
 ```
 
-### Containers
+### Containers [(:rocket:)](https://docs.docker.com/reference/cli/docker/container/)
 
 ```bash
-# Comandos de 'container'
+# Subcomandos de 'container'
 docker container --help
 
 # Listar contenedores en ejecución
 # Aliases 'docker container list', 'docker container ps', 'docker ps'
-docker container ls [OPTIONS]
+docker container ls
 
 # Listar todos los contenedores
 docker container ls --all
@@ -409,50 +402,50 @@ docker container ls -a --filter "status=exited"
 # Obtener el ID del contenedor para una imagen específica usando una expresión regular
 docker container ls | grep wildfly | awk '{print $1}'
 
-# Ver detalles del contenedor
-docker container inspect [OPTIONS] CONTAINER [CONTAINER...]
+# Ver detalles de un contenedor
+docker container inspect [container_id]
 
 # Encontrar la IP de un contenedor
-docker container inspect --format '{{ .NetworkSettings.IPAddress }}' CONTAINER
+docker container inspect --format '{{ .NetworkSettings.IPAddress }}' [container_id]
 
 # Mostrar los logs del contenedor
 # Aliases 'docker logs'
-docker container logs [OPTIONS] CONTAINER
+docker container logs [container_id]
 
 # Mostrar últimos logs
 # Aliases 'docker logs'
-docker container logs --tail 100 CONTAINER
+docker container logs --tail 100 [container_id]
 
 # Ver estadísticas en tiempo real
 # Aliases 'docker stats'
-docker container stats [OPTIONS] [CONTAINER...]
+docker container stats [container_id]
 
 # Ejecutar un comando en el contenedor
 # Aliases 'docker exec'
-docker container exec [OPTIONS] CONTAINER COMMAND [ARG...]
+docker container exec [container_id] [comando] [args...]
 
 # Renombrar un contenedor
 # Aliases 'docker rename'
-docker container rename CONTAINER NEW_NAME
+docker container rename [old_name] [new_name]
 
 # Conectar a un contenedor
 # Aliases 'docker attach'
-docker container attach [OPTIONS] CONTAINER
+docker container attach [container_id]
 
 # Arrancar un contenedor
 # Aliases 'docker start'
-docker container start [OPTIONS] CONTAINER [CONTAINER...]
+docker container start [container_id]
 
 # Detener un contenedor
 # Aliases 'docker stop'
-docker container stop [OPTIONS] CONTAINER [CONTAINER...]
+docker container stop [container_id]
 
 # Detener todos los contenedores en ejecución
 docker container stop $(docker container ls --quiet)
 
 # Eliminar un contenedor
 # Aliases 'docker container remove', 'docker rm'
-docker container rm [OPTIONS] CONTAINER [CONTAINER...]
+docker container rm [container_id]
 
 # Eliminar contenedores que coincidan con una expresión regular
 docker container ls -a | grep wildfly | awk '{print $1}' | xargs docker container rm -f
@@ -463,21 +456,18 @@ docker container rm -f $(docker container ls --all --filter "status=exited" --qu
 # Eliminar todos los contenedores
 docker container rm $(docker container ls --all --quiet)
 
-# Crear y ejecutar un nuevo contendedor a partir de una imagen
-# Aliases 'docker run'
-docker container run [OPTIONS] IMAGE [COMMAND] [ARG...]
-
 # Crea y ejecuta un nuevo contenedor
+# Aliases 'docker run'
 docker container run --detach --name my-container --publish 80:80 my-image
 
 # Abrir una shell interactiva en un contenedor
-docker container exec -it ${CONTAINER_ID} bash
+docker container exec --interactive --tty ${CONTAINER_ID} bash # -it
 ```
 
-### Volume
+### Volume [(:rocket:)](https://docs.docker.com/reference/cli/docker/volume/)
 
 ```bash
-# Comandos de 'volume'
+# Subcomandos de 'volume'
 docker volume --help
 
 # Listar todos los volúmenes
@@ -485,7 +475,7 @@ docker volume --help
 docker volume ls
 
 # Eliminar todos los volúmenes no utilizados
-docker volume prune [OPTIONS]
+docker volume prune
 
 # Eliminar volúmenes huérfanos (_'dangling'_)
 docker volume rm $(docker volume ls --quiet --filter dangling=true) # -qf
@@ -494,11 +484,14 @@ docker volume rm $(docker volume ls --quiet --filter dangling=true) # -qf
 ### Others
 
 ```bash
+# Inicializar un proyecto con los archivos necesarios para ejecutarlo en un contenedor
+docker init
+
 # Mostrar el número de versión de Docker
 docker --version
 
 # Mostrar la versión del cliente y del servidor
-docker version [OPTIONS]
+docker version
 
 # Muestra los registros del servicio de Docker en sistemas basados en 'systemd'
 journalctl -u docker
@@ -508,13 +501,13 @@ docker system --help
 
 # Proporciona un resumen completo del estado del daemon de Docker
 # Aliases 'docker info'
-docker system info [OPTIONS]
+docker system info
 
 # Muestra el uso de espacio en disco por imágenes, contenedores, y volúmenes
-docker system df [OPTIONS]
+docker system df
 
 # Limpieza general del sistema
-docker system prune [OPTIONS]
+docker system prune
 
 # Iniciar el daemon manualmente
 dockerd
@@ -550,6 +543,7 @@ sudo apt-get update && sudo apt-get upgrade docker-ce
 - <https://github.com/wsargent/docker-cheat-sheet/tree/master/es-es>
 - <https://github.com/collabnix/dockerlabs/blob/master/docker/cheatsheet/README.md>
 - <https://labs.play-with-docker.com/>
+- <https://www.youtube.com/playlist?list=PLO9JpmNAsqM6PxlmKj6kfX-a8WwZJnwD9>
 
 ### Docker - Container
 
@@ -561,6 +555,7 @@ sudo apt-get update && sudo apt-get upgrade docker-ce
 - [The Fn project is an open-source container-native serverless platform that you can run anywhere](https://fnproject.io/)
 - [Crossplane - The open source multicloud control plane](https://crossplane.io/)
 - [Kool makes using Docker for local development easier, simpler, faster, and better](https://kool.dev/)
+- [Development Containers (dev containers)](https://containers.dev/)
 
 ### Docker - Tools
 
@@ -568,6 +563,7 @@ sudo apt-get update && sudo apt-get upgrade docker-ce
 - <https://github.com/containers/skopeo>
 - <https://github.com/containers>
 - [Container tools by Google](https://github.com/GoogleContainerTools)
+- [Dev Containers](https://code.visualstudio.com/docs/devcontainers/containers)
 
 ### Docker - Security
 
