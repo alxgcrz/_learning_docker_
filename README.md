@@ -240,6 +240,8 @@ Las imágenes suelen construirse para ejecutar un **solo proceso**. Si la aplica
 
 Al ejecutar un contenedor desde una imagen, este puede de corta duración, ejecutando alguna funcionalidad y luego terminando; puede ser una aplicación de larga duración que se ejecuta como un servicio de fondo; o puede ser un contenedor interactivo con el que se puede conectar como si fuera una máquina remota.
 
+Un **tag** es una etiqueta que se le asigna a una imagen dentro de un repositorio. Se utiliza para indicar la versión de una imagen y permite diferenciar de forma sencilla las imágenes que forman parte de un repositorio.
+
 ### Contenedores
 
 Un contenedor es una **instancia ejecutable de una imagen**. Representa una unidad de software ligera y autónoma que incluye todo lo necesario para ejecutar una aplicación.
@@ -261,6 +263,28 @@ Hay dos tipos de contenedores:
 - **Contenedores Linux**: estos contenedores se pueden ejecutar en los sistemas operativos Linux, macOS y Windows. En macOS y Windows, Docker utiliza una máquina virtual ligera (basada en Linux) para ejecutar estos contenedores, ya que necesitan el núcleo de Linux para funcionar. Solo cuando se ejecutan sobre un sistema operativo Linux pueden utilizar directamente el kernel del sistema operativo anfitrión, lo que les permite ser más eficientes en cuanto a recursos.
 
 - **Contenedores Windows**: estos contenedores sólo se pueden ejecutar en sistemas operativos Windows y Windows Server. A diferencia de los contenedores Linux, los contenedores Windows utilizan el kernel de Windows y requieren un sistema operativo Windows de la misma versión o similar para poder funcionar. Esto significa que no se pueden ejecutar contenedores Windows en sistemas basados en Linux sin usar alguna solución de virtualización adicional.
+
+El ciclo de vida de un contenedor está compuesto por los siguientes estados:
+
+- **Created**. En este estado, el contenedor ha sido creado, pero todavía no se está ejecutando. Un contenedor se encuentra en este estado después de ejecutar el comando `docker container create`.
+
+- **Running**. Un contenedor está en ejecución cuando está ejecutando la aplicación que contiene (definido en `CMD` o `ENTRYPOINT`). Puede pasar del estado **'Created'** al estado **'Running'** con el comando `docker container start` o se puede ejecutar directamente con `docker container run`.
+
+- **Paused**. Un contenedor que está en ejecución puede ser pausado para detener su ejecución de forma temporal. Para pausar la ejecución de un contenedor, se ejecuta el comando `docker container pause`, que se encarga de enviar la señal _'SIGSTOP'_ al proceso principal del contenedor.
+
+- **Exited**. Para detener de forma temporal un contenedor que está en ejecución, se utiliza el comando `docker container stop`, que se encarga de enviar las señales _'SIGTERM'_ y _'SIGKILL'_ al proceso principal del contenedor.
+
+- **Removed / Deleted**. El contenedor ha sido completamente eliminado con el comando `docker container rm`.
+
+```txt
+ Created ────────────────▶ Running ──────────────▶ Exited ───▶ Removed
+   │                          │                     ▲
+   │                          ▼                     │
+   │                       Paused                Restarting
+   │                          │                     │
+   ▼                          ▼                     ▼
+  (configurado)        Unpaused             (política de reinicio)
+```
 
 ### Volúmenes
 
@@ -389,6 +413,21 @@ docker image push [nombre[:tag]]
 # Subcomandos de 'container'
 docker container --help
 
+# Crear un contenedor (en estado 'created', sin arrancarlo) y le asigna un nombre
+# Aliases 'docker create'
+docker container create --name [name] [IMAGE]
+
+# Arrancar un contenedor
+# Aliases 'docker start'
+docker container start [container_id]
+
+# Detener un contenedor
+# Aliases 'docker stop'
+docker container stop [container_id]
+
+# Detener todos los contenedores en ejecución
+docker container stop $(docker container ls --quiet)
+
 # Listar contenedores en ejecución
 # Aliases 'docker container list', 'docker container ps', 'docker ps'
 docker container ls
@@ -431,17 +470,6 @@ docker container rename [old_name] [new_name]
 # Conectar a un contenedor
 # Aliases 'docker attach'
 docker container attach [container_id]
-
-# Arrancar un contenedor
-# Aliases 'docker start'
-docker container start [container_id]
-
-# Detener un contenedor
-# Aliases 'docker stop'
-docker container stop [container_id]
-
-# Detener todos los contenedores en ejecución
-docker container stop $(docker container ls --quiet)
 
 # Eliminar un contenedor
 # Aliases 'docker container remove', 'docker rm'
@@ -534,10 +562,12 @@ sudo apt-get update && sudo apt-get upgrade docker-ce
 - 🔸 [Docker - Build, Ship, and Run Any App, Anywhere](https://www.docker.com/)
 - [Docker - Explore official repositories](https://hub.docker.com/)
 - 👓 <https://github.com/veggiemonk/awesome-docker>
+- 👓 <https://github.com/docker/awesome-compose>
 - [Moby is an open framework created by Docker to assemble specialized container systems](https://mobyproject.org/)
 
 ### Docker - Learning
 
+- <https://docs.docker.com/>
 - <https://roadmap.sh/docker>
 - <https://cheatsheets.zip/docker>
 - <https://github.com/wsargent/docker-cheat-sheet/tree/master/es-es>
@@ -545,7 +575,12 @@ sudo apt-get update && sudo apt-get upgrade docker-ce
 - <https://labs.play-with-docker.com/>
 - <https://www.youtube.com/playlist?list=PLO9JpmNAsqM6PxlmKj6kfX-a8WwZJnwD9>
 
-### Docker - Container
+### Docker - Security
+
+- <https://github.com/docker/docker-bench-security>
+- <https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html>
+
+### Container
 
 - ⭐ [Open Container Initiative (OCI)](https://opencontainers.org/)
 - ⭐ [Cloud Native Computing Foundation (CNCF)](https://www.cncf.io/)
@@ -553,27 +588,20 @@ sudo apt-get update && sudo apt-get upgrade docker-ce
 - [Welcome to the Oracle Container Registry](https://container-registry.oracle.com/)
 - [LXC - Linux Containers](https://linuxcontainers.org/)
 - [The Fn project is an open-source container-native serverless platform that you can run anywhere](https://fnproject.io/)
+- [Podman](https://podman.io/)
+
+### Container - Tools
+
+- <https://github.com/containers>
+- <https://github.com/wagoodman/dive>
+- [Container tools by Google](https://github.com/GoogleContainerTools)
 - [Crossplane - The open source multicloud control plane](https://crossplane.io/)
 - [Kool makes using Docker for local development easier, simpler, faster, and better](https://kool.dev/)
+
+### Dev Containers
+
 - [Development Containers (dev containers)](https://containers.dev/)
-
-### Docker - Tools
-
-- <https://github.com/wagoodman/dive>
-- <https://github.com/containers/skopeo>
-- <https://github.com/containers>
-- [Container tools by Google](https://github.com/GoogleContainerTools)
 - [Dev Containers](https://code.visualstudio.com/docs/devcontainers/containers)
-
-### Docker - Security
-
-- <https://github.com/docker/docker-bench-security>
-- <https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html>
-
-### Docker - Applications
-
-- [Bitnami - Packaged Applications for Any Platform](https://bitnami.com/)
-- [TurnKey GNU/Linux: 100+ free ready-to-use system images for virtual machines, the cloud, and bare metal.](https://www.turnkeylinux.org/)
 
 ## Licencia
 
