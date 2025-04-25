@@ -78,14 +78,14 @@ El uso más habitual de **_Docker CLI_** es para interactuar con **contenedores 
 
 #### Docker Compose
 
-**_Docker Compose_** es una herramienta que permite definir, ejecutar y gestionar aplicaciones con **múltiples contenedores** en un sólo _host_. Utiliza un archivo de configuración con formato YAML para definir los servicios, las redes y los volúmenes que componen la aplicación.
+**_Docker Compose_** es una herramienta que permite definir, ejecutar y gestionar aplicaciones con **múltiples contenedores en un sólo _host_**. Utiliza un archivo de configuración con formato YAML para definir los servicios, las redes y los volúmenes que componen la aplicación.
 
 ```sh
 # Muestra la ayuda de Docker Compose
 $ docker compose help
 ```
 
-Una de las ventajas que ofrece **_Docker Compose_** es que basta con ejecutar un solo comando para crear y ejecutar todos los servicios definidos en el archivo de configuración:
+Una de las ventajas que ofrece **_Docker Compose_** es que basta con ejecutar un solo comando para crear y ejecutar todos los servicios definidos en el archivo de configuración en formato YAML:
 
 ```yml
 version: '3'
@@ -100,15 +100,115 @@ services:
       MYSQL_ROOT_PASSWORD: example
 ```
 
+**La especificación Compose** es un estándar oficial, unificado y abierto donde se define cómo debe estructurarse un archivo `docker-compose.yml`. Esta especificación es un proyecto open source mantenido por la comunidad y por Docker en su conjunto, disponible [aquí](https://compose-spec.io/).
+
 **_Docker Compose_** es ideal para entornos de desarrollo local o para manejar aplicaciones que no requieren orquestación compleja. Es excelente para definir pilas de aplicaciones (e.g., una aplicación con un servidor web, base de datos y servicio de caché) en un solo _host_.
 
-**_Docker Compose_** no solo gestiona los servicios, sino también las redes y volúmenes. Puedes definir cómo los servicios se comunican entre sí y si ciertos volúmenes son compartidos o persistentes, lo que es ideal para casos donde las aplicaciones requieren bases de datos u otros servicios que dependen de almacenamiento persistente.
+**_Docker Compose_** no solo gestiona los servicios, sino también las redes y volúmenes. Se pueden definir cómo los servicios se comunican entre sí y si ciertos volúmenes son compartidos o persistentes, lo que es ideal para casos donde las aplicaciones requieren bases de datos u otros servicios que dependen de almacenamiento persistente.
 
 En la actualidad existen dos versiones de **_Docker Compose_**:
 
-- **v1**: debe instalarse como una herramienta adicional y se ejecuta con `docker-compose`
+- **v1**: debe instalarse como una herramienta adicional y se ejecuta con `docker-compose`. Esta implementada en Python.
 
-- **v2**: integra el comando `compose` dentro del cliente oficial de **_Docker CLI_**. Por lo tanto, la nueva versión se ejecuta con `docker compose`
+- **v2**: integra el comando dentro del cliente oficial de **_Docker CLI_**. Por lo tanto, la nueva versión se ejecuta con `docker compose`. Esta versión está implementada en Go.
+
+##### Compose file reference
+
+- [Compose file reference - docker.com](https://docs.docker.com/reference/compose-file/)
+
+```yml
+name: mi-app
+
+services:
+  app:
+    container_name: mi-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mi-app:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - API_KEY=${API_KEY}
+    volumes:
+      - .:/usr/src/app
+      - app-node-modules:/usr/src/app/node_modules
+    depends_on:
+      - db
+      - redis
+    networks:
+      - backend
+      - frontend
+
+  db:
+    image: postgres:15
+    container_name: mi-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: usuario
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: midb
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  redis:
+    image: redis:7
+    container_name: mi-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - backend
+
+volumes:
+  db-data:
+  app-node-modules:
+
+networks:
+  backend:
+  frontend:
+```
+
+Buenas prácticas para evitar errores comunes al escribir archivos `docker-compose.yml`:
+
+- Uso de comillas dobles (`"`) en puertos, rutas con dos puntos o valores con variables:
+
+```yml
+ports:
+  - "3000:3000"
+  - "127.0.0.1:8080:80"
+
+environment:
+  - "API_KEY=${API_KEY}"
+```
+
+- YAML solo permite espacios, no tabulaciones. Usar tabulaciones puede hacer que `docker compose` falle silenciosamente.
+
+- No utilizar números con ceros a la izquierda ya que YAML los interpreta como **número octal**. Si hay que usar ceros, utilizar las comillas:
+
+```yml
+- "PIN=0123"
+```
+
+- Las variables se pueden cargar desde uno o varios archivos `.env`:
+
+```yml
+env_file:
+  - .env
+  - .env.local
+```
+
+Dentro del `.env` no hay que usar espacios ni comillas:
+
+```env
+API_KEY=abc123
+NOMBRE=MiApp
+```
+
+- Para validar el fichero se puede usar el comando `docker compose config`.
 
 ### Docker Engine
 
@@ -349,6 +449,10 @@ Este orquestador fue desarrollado originalmente por Google, pero fue donado a la
 Kubernetes puede utilizar diferentes _'container runtimes'_ para ejecutar contenedores. El único requisito es que sean compatibles con una API llamada **_Container Runtime Interface (CRI)_**.
 
 Kubernetes es compatible con _containerd_, que es el _'container runtime'_ que utiliza **_Docker Engine_**. Por lo tanto, en un _cluster_ de Kubernetes se pueden crear y ejecutar contenedores a partir de imágenes Docker, que cumplen con la especificación OCI.
+
+## Dev containers
+
+TODO
 
 ## Appendix: Common Docker Commands [(:rocket:)](https://docs.docker.com/reference/cli/docker/)
 

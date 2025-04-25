@@ -1,0 +1,53 @@
+name: mi-app
+
+services:
+  app:
+    container_name: mi-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mi-app:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - "API_KEY=${API_KEY:-default_key}"
+    volumes:
+      - .:/usr/src/app
+      - app-node-modules:/usr/src/app/node_modules
+    depends_on:
+      - db
+      - redis
+    networks:
+      - backend
+      - frontend
+
+  db:
+    image: postgres:15
+    container_name: mi-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: usuario
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: midb
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  redis:
+    image: redis:7
+    container_name: mi-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - backend
+
+volumes:
+  db-data:
+  app-node-modules:
+
+networks:
+  backend:
+  frontend:
